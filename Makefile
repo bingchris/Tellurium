@@ -16,14 +16,14 @@ OUTPUT = kernel.bin
 
 # Define the source files
 BOOT_SRC = $(BOOT_DIR)/boot.asm
-KERNEL_SRC = $(KERNEL_DIR)/kernel.cpp $(KERNEL_DIR)/framebuffer.cpp
+KERNEL_SRC = $(KERNEL_DIR)/kernel.cpp
 
 # Define the include files
 INCLUDES = -I$(INCLUDE_DIR)
 
 # Define the object files
 BOOT_OBJ = $(BUILD_DIR)/boot.o
-KERNEL_OBJS = $(BUILD_DIR)/kernel.o $(BUILD_DIR)/framebuffer.o
+KERNEL_OBJS = $(BUILD_DIR)/kernel.o
 
 # Define the linker script
 LINKER_SCRIPT = $(BOOT_DIR)/linker.ld
@@ -37,11 +37,8 @@ $(BUILD_DIR):
 $(BOOT_OBJ): $(BOOT_SRC)
 	$(AS) -f elf32 $(BOOT_SRC) -o $(BOOT_OBJ)
 
-$(BUILD_DIR)/kernel.o: $(KERNEL_DIR)/kernel.cpp
-	$(CC) -m32 -nostdlib -nodefaultlibs -c $(KERNEL_DIR)/kernel.cpp $(INCLUDES) -o $(BUILD_DIR)/kernel.o
-
-$(BUILD_DIR)/framebuffer.o: $(KERNEL_DIR)/framebuffer.cpp
-	$(CC) -m32 -nostdlib -nodefaultlibs -c $(KERNEL_DIR)/framebuffer.cpp $(INCLUDES) -o $(BUILD_DIR)/framebuffer.o
+$(BUILD_DIR)/kernel.o: $(KERNEL_SRC)
+	$(CC) -m32 -nostdlib -nodefaultlibs -c $(KERNEL_SRC) $(INCLUDES) -o $(BUILD_DIR)/kernel.o
 
 $(OUTPUT): $(BOOT_OBJ) $(KERNEL_OBJS)
 	$(CC) -m32 -T $(LINKER_SCRIPT) -nostdlib -nodefaultlibs -o $(OUTPUT) $(BOOT_OBJ) $(KERNEL_OBJS)

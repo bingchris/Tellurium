@@ -1,4 +1,6 @@
-#include "../Include/framebuffer.h"
+#ifndef FRAMEBUFFERC_H
+#define FRAMEBUFFERC_H
+
 #include "../Include/multiboot.h"
 
 static uint32_t* framebuffer = nullptr;
@@ -15,6 +17,14 @@ void initialize_framebuffer(MultibootInfo* mb_info) {
 
 void draw_pixel(uint32_t x, uint32_t y, uint32_t color) {
     if (x < width && y < height) {
-        framebuffer[y * pitch + x] = color;
+        uint32_t* pixel_addr = framebuffer + y * pitch + x;
+        __asm__ __volatile__(
+            "movl %0, (%1)"
+            :
+            : "r"(color), "r"(pixel_addr)
+            : "memory"
+        );
     }
 }
+
+#endif // FRAMEBUFFERC_H

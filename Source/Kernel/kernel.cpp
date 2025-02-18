@@ -1,19 +1,39 @@
-#include "../Include/framebuffer.h"
+#ifndef telluriumkernel
+#define telluriumkernel
+#include "framebuffer.cpp"
 #include "../Include/multiboot.h"
+#include <string.h>
+int aprintf(unsigned int line, char *message, ...) {
+    unsigned int i = line*(80*2);
+    char *vidmem = (char *) 0xb8000;
+    while (*message != 0) {
 
-extern "C" MultibootInfo* multiboot_info_ptr;
+            vidmem[i] = *message;
+            i++;
+            vidmem[i] = 0x07;
+            i++;
+        
+        message++;
+    };
+    return 1;
+}
+MultibootInfo* multiboot_info_ptr;
 
 extern "C" void kernel_main(MultibootInfo* mb_info) {
-    multiboot_info_ptr = mb_info;
+    
     initialize_framebuffer(mb_info);
 
-    for (uint32_t y = 0; y < 200; ++y) {
-        for (uint32_t x = 0; x < 200; ++x) {
-            draw_pixel(x, y, 0x00FF00); // Green pixel
-        }
-    }
+    // Debug: Print framebuffer details
+    aprintf(1,"Framebuffer Address: 0x%X\n", mb_info->framebuffer_addr);
+    aprintf(2,"Framebuffer Pitch: %u\n", mb_info->framebuffer_pitch);
+    aprintf(3,"Framebuffer Width: %u\n", mb_info->framebuffer_width);
+    aprintf(4,"Framebuffer Height: %u\n", mb_info->framebuffer_height);
+    aprintf(5,"Framebuffer BPP: %u\n", mb_info->framebuffer_bpp);
+
+    draw_pixel(100, 100, 0x00FF00);
 
     while (1) {
         __asm__ __volatile__("hlt");
     }
 }
+#endif
