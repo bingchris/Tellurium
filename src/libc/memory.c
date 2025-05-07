@@ -1,3 +1,8 @@
+/*
+	Keystone kernel
+	bingchris 2024
+*/
+
 // gcc and clang can make calls to these functions even if they are not called (trespassing???)
 // yes i moved them to a different file
 #include <stdint.h>

@@ -2,6 +2,10 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "limine.h"
+/*
+	Keystone kernel
+	bingchris 2024
+*/
 
 // base revision 3 (latest)
 __attribute__((used, section(".limine_requests")))
