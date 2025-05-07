@@ -5,3 +5,6 @@
 /bin
 *.sys
 *.EFI
+/limine
+/iso_root/boot/keystone
+/iso_root/boot/limine

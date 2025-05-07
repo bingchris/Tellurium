@@ -1,37 +1,30 @@
 #!/bin/bash
 
-set -e  # Exit immediately if a command fails
-BUILD_DIR=".build"
-LIMINE_REPO="https://github.com/limine-bootloader/limine.git"
-FLANTERM_REPO="https://codeberg.org/mintsuki/flanterm.git"
+set -e  # Exit on error
 
-# Handle "clean" argument
-if [[ "$1" == "clean" ]]; then
-    echo "[+] Cleaning up '$BUILD_DIR'..."
-    rm -rf "$BUILD_DIR"
-    echo "[+] Cleanup complete!"
-    exit 0
-fi
+# Define paths
+LIMINE_DIR="limine"
 
-# Create the .build directory
-mkdir -p "$BUILD_DIR"
+# Step 1: Remove any existing Limine directory
+echo "[*] Removing old Limine version if it exists..."
+rm -rf "$LIMINE_DIR"
 
-echo "[+] Cloning Limine repository..."
-git clone "$LIMINE_REPO" "$BUILD_DIR/limine"
+# Step 2: Clone the correct Limine release
+echo "[*] Cloning Limine v9.x-binary..."
+git clone --branch v9.x-binary --depth 1 https://github.com/limine-bootloader/limine.git "$LIMINE_DIR"
 
-cd "$BUILD_DIR/limine"
+# Step 3: Ensure required directories exist
+echo "[*] Creating required directories..."
+mkdir -p "iso_root/boot/limine"
+mkdir -p "iso_root/EFI/BOOT"
 
-echo "[+] Cloning Flanterm repository..."
-git clone "$FLANTERM_REPO" "common/flanterm"
+# Step 4: Copy Limine bootloader components
+echo "[*] Copying Limine binaries..."
+cp "$LIMINE_DIR/limine-bios.sys" "iso_root/boot/limine/"
+cp "$LIMINE_DIR/limine-bios-cd.bin" "iso_root/boot/limine/"
+cp "$LIMINE_DIR/limine-bios-pxe.bin" "iso_root/"
+cp "$LIMINE_DIR/limine-uefi-cd.bin" "iso_root/boot/limine/"
+cp "$LIMINE_DIR/BOOTIA32.EFI" "iso_root/EFI/BOOT/"
+cp "$LIMINE_DIR/BOOTX64.EFI" "iso_root/EFI/BOOT/"
 
-echo "[+] Building Limine..."
-make -C test -f test.mk clean
-make -C test -f test.mk
-
-echo "[+] Copying necessary files..."
-mkdir -p "$BUILD_DIR"
-cp bin/limine-bios.bin bin/limine-efi.bin bin/limine.sys "$BUILD_DIR/"
-cp -r config "$BUILD_DIR/"
-
-echo "[+] Limine setup completed!"
-echo "Bootloader files are now in '$BUILD_DIR'."
+echo "[+] Limine v9.x-binary setup complete!"
