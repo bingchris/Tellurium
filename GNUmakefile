@@ -125,6 +125,9 @@ dev: clean all iso qemu
 limineclean:
 	rm -rf limine iso_root/boot/limine iso_root/EFI iso_root/limine-bios-pxe.bin
 
+limine:
+	./setup_limine.sh
+
 # Remove object files and the final executable.
 .PHONY: clean
 clean:
