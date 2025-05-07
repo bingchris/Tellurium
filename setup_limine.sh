@@ -3,6 +3,7 @@
 set -e  # Exit immediately if a command fails
 BUILD_DIR=".build"
 LIMINE_REPO="https://github.com/limine-bootloader/limine.git"
+FLANTERM_REPO="https://codeberg.org/mintsuki/flanterm.git"
 
 # Handle "clean" argument
 if [[ "$1" == "clean" ]]; then
@@ -16,9 +17,12 @@ fi
 mkdir -p "$BUILD_DIR"
 
 echo "[+] Cloning Limine repository..."
-git clone --depth=1 "$LIMINE_REPO" "$BUILD_DIR/limine"
+git clone "$LIMINE_REPO" "$BUILD_DIR/limine"
 
 cd "$BUILD_DIR/limine"
+
+echo "[+] Cloning Flanterm repository..."
+git clone "$FLANTERM_REPO" "common/flanterm"
 
 echo "[+] Building Limine..."
 make -C test -f test.mk clean
