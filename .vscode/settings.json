@@ -1,6 +1,0 @@
-{
-    "files.associations": {
-        "*.wrs": "rust",
-        "limine.h": "c"
-    }
-}
