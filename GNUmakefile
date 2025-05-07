@@ -2,6 +2,12 @@
 MAKEFLAGS += -rR
 .SUFFIXES:
 
+# XORRISO
+xorriso := xorriso -as mkisofs -R -r -J -b boot/limine/limine-bios-cd.bin -no-emul-boot -boot-load-size 4 -boot-info-table -hfsplus -apm-block-size 2048 --efi-boot boot/limine/limine-uefi-cd.bin -efi-boot-part --efi-boot-image --protective-msdos-label iso_root
+iso_out := keystone.iso
+
+# qemu cmd
+qemucmd := qemu-system-x86_64 -m 1024M -cdrom $(iso_out)
 # This is the name that our final executable will have.
 # Change as needed.
 override OUTPUT := keystone
@@ -105,6 +111,16 @@ obj/%.S.o: src/%.S GNUmakefile
 obj/%.asm.o: src/%.asm GNUmakefile
 	mkdir -p "$$(dirname $@)"
 	nasm $(NASMFLAGS) $< -o $@
+
+# iso make
+iso:
+	cp bin/keystone iso_root/boot/keystone
+	$(xorriso) -o $(iso_out)
+
+
+qemu:
+	$(qemucmd)
+dev: clean all iso qemu
 
 # Remove object files and the final executable.
 .PHONY: clean
