@@ -4,7 +4,7 @@
 #include "limine.h"
 /*
 	Keystone kernel
-	bingchris 2024
+	bingchris 2025
 */
 
 // base revision 3 (latest)
