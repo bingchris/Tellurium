@@ -2,8 +2,12 @@
 #include "framebuffer.h"
 #include "kernel/limine_setup.h"
 static uint16_t cursor_x = 0, cursor_y = 0;
-
+/*
+	Keystone kernel
+	bingchris 2025
+*/
 void scroll_framebuffer() {
+    /*this is slow, please fix future me*/
     struct framebuffer *fb = get_framebuffer();
     if (!fb) return;
 
@@ -13,7 +17,6 @@ void scroll_framebuffer() {
         }
     }
 
-    // Clear last row
     for (uint16_t x = 0; x < fb->width; x++) {
         framebuffer_set_pixel(x, fb->height - font_vga_8x16.height, 0x000000);
     }
@@ -32,13 +35,11 @@ void kprint(const char *str, uint32_t color) {
             cursor_x += font_vga_8x16.width;
         }
 
-        // Ensure text doesn't exceed screen width
         if (cursor_x + font_vga_8x16.width >= fb->width) {
             cursor_x = 0;
             cursor_y += font_vga_8x16.height;
         }
 
-        // Scroll if text exceeds screen height
         if (cursor_y + font_vga_8x16.height >= fb->height) {
             scroll_framebuffer();
             cursor_y -= font_vga_8x16.height;
@@ -72,7 +73,7 @@ void framebuffer_clear(uint32_t color) {
 
 uint32_t framebuffer_get_pixel(uint16_t x, uint16_t y) {
     struct framebuffer *fb = get_framebuffer();
-    if (!fb) return 0;  // Return black if framebuffer doesn't exist
+    if (!fb) return 0; 
 
     uint32_t *pixel = (uint32_t *)((uintptr_t)fb->address + y * fb->pitch + x * sizeof(uint32_t));
     return *pixel;

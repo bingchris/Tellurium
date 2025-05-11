@@ -20,8 +20,8 @@ __attribute__((used, section(".limine_requests")))
 
 #include "libc/memory.h"
 
-// halt and CATCH FIRE!!!
-static void hcf(void) {
+// halt
+static void halt(void) {
 	for (;;) {
 		asm ("hlt");
 	}
@@ -29,21 +29,19 @@ static void hcf(void) {
 
 void kernel_main(void) {
     if (LIMINE_BASE_REVISION_SUPPORTED == false) {
-        hcf();
+        halt();
     }
 
-    // Initialize Limine framebuffer
     setup_limine();
 
-    // Ensure framebuffer exists
     struct framebuffer *fb = get_framebuffer();
     if (!fb) {
-        hcf();  // Halt if framebuffer isn't available
+        halt(); 
     }
 
-    // Print "Hello, world!"
-    kprint("Yep, that's text in keystone.\nyay.", 0x00ff00);
+    // print boot messager
+    kprint("Keystone 0.1", 0x00ff00);
 
-    // Halt cleanly
-    for (;;) asm ("hlt");
+    // halt
+    halt();
 }

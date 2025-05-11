@@ -3,11 +3,13 @@
 
 #include <stdint.h>
 #include "limine.h"
-
+/*
+	Keystone kernel
+	bingchris 2025
+*/
 extern struct limine_framebuffer_request framebuffer_request;
 
 
-// Framebuffer metadata
 struct framebuffer {
     uint32_t *address;
     uint16_t width;

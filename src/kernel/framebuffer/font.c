@@ -1,6 +1,12 @@
 #include <stdint.h>
 #include "font.h"
-
+/*
+	Keystone kernel
+	bingchris 2025
+    Sources:
+    https://github.com/torvalds/linux/blob/master/lib/fonts/font_8x16.c
+    ^ ported from Linux font handling to my own
+*/
 
 static const uint8_t glyphs[256][16] = {
     [0] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },  // ASCII 0
