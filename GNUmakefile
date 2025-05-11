@@ -52,7 +52,9 @@ override CFLAGS += \
     -mno-sse \
     -mno-sse2 \
     -mno-red-zone \
-    -mcmodel=kernel
+    -mcmodel=kernel \
+    -Werror # this is goated if you are osdev
+    # ignore -Werror=unused-parameter
 
 # Internal C preprocessor flags that should not be changed by the user.
 override CPPFLAGS := \
