@@ -17,8 +17,6 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y nasm build-essential libc6-dev-i386 gcc-multilib
     - uses: actions/checkout@v4
-    - name: configure
-      run: ./configure
     - name: make limine
       run: make limine
     - name: make
