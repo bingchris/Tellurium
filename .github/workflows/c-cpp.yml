@@ -15,7 +15,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y nasm build-essential libc6-dev-i386 gcc-multilib
+        sudo apt-get install -y nasm build-essential libc6-dev-i386 gcc-multilib xorriso
     - uses: actions/checkout@v4
     - name: make limine
       run: make limine
