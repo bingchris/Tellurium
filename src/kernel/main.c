@@ -78,7 +78,7 @@ void kernel_main(void) {
     }
 
     // write to file
-    const char *data = "Hello, VFS!";
+    const char *data = "vfs test";
     if (vfs_write_to_file(file, data, 12) != 0) {
         halt();
     }
@@ -86,7 +86,7 @@ void kernel_main(void) {
     // read from file
     char buffer[13] = {0};
     if (vfs_read_from_file(file, buffer, sizeof(buffer)) > 0) {
-        kprint("File contents: ", 0xffffff);
+        kprint("ok so heres the data: ", 0xffffff);
         kprint(buffer, 0xffffff);
         kprint("\n", 0xffffff);
     }
