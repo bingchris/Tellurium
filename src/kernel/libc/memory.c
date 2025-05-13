@@ -73,3 +73,7 @@ int strcmp(const char *s1, const char *s2) {
     }
     return *(unsigned char *)s1 - *(unsigned char *)s2;
 }
+
+void outb(uint16_t port, uint8_t value) {
+    asm volatile ("outb %0, %1" : : "a"(value), "Nd"(port));
+}

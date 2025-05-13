@@ -1,6 +1,7 @@
 #include "font.h"
 #include "framebuffer.h"
 #include "kernel/limine_setup.h"
+#include "kernel/libc/memory.h"
 static uint16_t cursor_x = 0, cursor_y = 0;
 /*
 	Keystone kernel
@@ -23,6 +24,10 @@ void scroll_framebuffer() {
 }
 
 void kprint(const char *str, uint32_t color) {
+    // print to serial
+    for (const char *p = str; *p; p++) {
+        outb(0x3F8, *p); 
+    }
     struct framebuffer *fb = get_framebuffer();
     if (!fb) return;
 

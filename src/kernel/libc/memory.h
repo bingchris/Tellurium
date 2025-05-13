@@ -11,4 +11,6 @@ int memcmp(const void *s1, const void *s2, size_t n);
 char *strncpy(char *dest, const char *src, size_t n);
 int strcmp(const char *s1, const char *s2);
 
+void outb(uint16_t port, uint8_t value);
+
 #endif

@@ -7,7 +7,7 @@ xorriso := xorriso -as mkisofs -R -r -J -b boot/limine/limine-bios-cd.bin -no-em
 iso_out := keystone.iso
 
 # qemu cmd
-qemucmd := qemu-system-x86_64 -m 1024M -cdrom $(iso_out)
+qemucmd := qemu-system-x86_64 -m 1024M -cdrom $(iso_out) -serial stdio
 # This is the name that our final executable will have.
 # Change as needed.
 override OUTPUT := keystone
