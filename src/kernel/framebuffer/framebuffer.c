@@ -1,7 +1,7 @@
 #include "font.h"
 #include "framebuffer.h"
 #include "kernel/limine_setup.h"
-#include "kernel/libc/memory.h"
+#include "kernel/io.h"
 static uint16_t cursor_x = 0, cursor_y = 0;
 /*
 	Keystone kernel

@@ -55,10 +55,12 @@ void kernel_main(void) {
     setup_limine();
 
     // get framebuffer
-    struct framebuffer *fb = get_framebuffer();
+    /*struct framebuffer *fb = get_framebuffer();
     if (!fb) {
         halt(); 
     }
+    */
+    
 
     // print boot message
     kprint("Keystone 0.1\n", 0x00ff00);
