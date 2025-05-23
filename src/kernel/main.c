@@ -7,6 +7,7 @@
 #include "libc/memory.h"
 #include "vfs/vfs.h"
 #include "memory/kmalloc.h"
+#include "drivers/keyboard.h"
 
 /*
 	Keystone kernel
@@ -20,9 +21,9 @@ static volatile LIMINE_BASE_REVISION(3);
 // framebuffer request
 __attribute__((used, section(".limine_requests")))
 
-// root node for the in-memory filesystem
-static vfs_node_t memfs_root = {
-    .name = "memfs",
+// root node for the in-tmp filesystem
+static vfs_node_t tmpfs_root = {
+    .name = "tmpfs",
     .type = VFS_TYPE_DIR,
     .size = 0,
     .ops = NULL,
@@ -71,10 +72,10 @@ void kernel_main(void) {
 
     // mount root
     kprint("keystone: mount root\n", 0xffffff);
-    vfs_mount("/", &memfs_root);
+    vfs_mount("/", &tmpfs_root);
 
     // create file
-    vfs_node_t *file = vfs_create_file("test.txt", &memfs_root);
+    vfs_node_t *file = vfs_create_file("test.txt", &tmpfs_root);
     if (!file) {
         halt();
     }
@@ -91,6 +92,27 @@ void kernel_main(void) {
         kprint("ok so heres the data: ", 0xffffff);
         kprint(buffer, 0xffffff);
         kprint("\n", 0xffffff);
+    }
+
+
+    //shit (shell is this (shit))
+    //using keybord.c
+    keyboard_init();
+    kprint("test> ", 0xffffff); //TODO: fix keyboard.c or something to make the user not be able to eat the fucking prompt
+    while (true) { //remind me tomorrow to implement this somehwere else
+        keyboard_read();
+        uint8_t key = keyboard_get_ascii();
+        if (key) {
+            if (key == '\b') {
+                kprint("\b \b", 0xffffff);
+            } else if (key) {
+                kprint((char[]){key, '\0'}, 0xffffff);
+            }
+
+        }
+        if (key == 0x1c) {
+            break;
+        }
     }
 
 
