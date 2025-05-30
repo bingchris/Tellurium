@@ -273,7 +273,9 @@ const font_t font_vga_8x16 = {
 };
 #include "framebuffer.h"  // Ensure it can set pixels
 
+
 void draw_char(uint16_t x, uint16_t y, char c, uint32_t color) {
+    
     const uint8_t *glyph = font_vga_8x16.glyphs[(uint8_t)c];
 
     for (int row = 0; row < font_vga_8x16.height; row++) {

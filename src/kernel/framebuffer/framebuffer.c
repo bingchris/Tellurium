@@ -5,12 +5,15 @@
 
 static uint16_t cursor_x = 0, cursor_y = 0;
 
+// this is where user input is allowed to backspace to
+static uint16_t min_cursor_x = 0, min_cursor_y = 0;
+
 /*
-    Keystone kernel
+    keystone kernel
     bingchris 2025
 */
 
-// scrolls framebuffer up when hit bottom
+// scrolls framebuffer up when hit bottom <-- slow on some systems and not on others, probably related to framebuffer size
 void scroll_framebuffer() {
     struct framebuffer *fb = get_framebuffer();
     if (!fb) return;
@@ -26,6 +29,11 @@ void scroll_framebuffer() {
     }
 }
 
+void set_min_cursor() {
+    min_cursor_x = cursor_x;
+    min_cursor_y = cursor_y;
+}
+
 void update_cursor() {
     struct framebuffer *fb = get_framebuffer();
     if (!fb) return;
@@ -36,13 +44,20 @@ void update_cursor() {
         }
     }
 
-    // draw new cursor (just an underscore lol, update this if you want to)
+    // draw new cursor (just an underscore lol)
+    //TODO: make this a blinking cursor
     draw_char(cursor_x, cursor_y, '_', 0xFFFFFF);
 }
 
 void handle_backspace() {
     struct framebuffer *fb = get_framebuffer();
     if (!fb) return;
+
+    // << \||\ \..>. \..\.>| translation: don't let user backspace past min_cursor
+    if (cursor_y < min_cursor_y || (cursor_y == min_cursor_y && cursor_x <= min_cursor_x)) {
+        update_cursor();
+        return;
+    }
 
     for (uint16_t row = 0; row < font_vga_8x16.height; row++) {
         for (uint16_t col = 0; col < font_vga_8x16.width; col++) {
@@ -66,12 +81,13 @@ void handle_backspace() {
     update_cursor(); 
 }
 
-// prints a string to the framebuffer (honest reaction: holeh moleh)
+// prints a string to the framebuffer as system output
 void kprint(const char *str, uint32_t color) {
     struct framebuffer *fb = get_framebuffer();
     if (!fb) return;
 
     while (*str) {
+        // erase cursor before next char
         for (uint16_t row = 0; row < font_vga_8x16.height; row++) {
             for (uint16_t col = 0; col < font_vga_8x16.width; col++) {
                 framebuffer_set_pixel(cursor_x + col, cursor_y + row, 0x000000);
@@ -79,8 +95,9 @@ void kprint(const char *str, uint32_t color) {
         }
 
         if (*str == '\b') {
-            handle_backspace();
+            // nothing since nothing
         } else if (*str == '\n') {
+            // clear cursor before new line
             for (uint16_t row = 0; row < font_vga_8x16.height; row++) {
                 for (uint16_t col = 0; col < font_vga_8x16.width; col++) {
                     framebuffer_set_pixel(cursor_x + col, cursor_y + row, 0x000000);
@@ -107,6 +124,52 @@ void kprint(const char *str, uint32_t color) {
 
         str++;
     }
+
+    set_min_cursor();
+}
+
+// print but backspaceable
+void kprint_user(const char *str, uint32_t color) {
+    struct framebuffer *fb = get_framebuffer();
+    if (!fb) return;
+
+    while (*str) {
+        for (uint16_t row = 0; row < font_vga_8x16.height; row++) {
+            for (uint16_t col = 0; col < font_vga_8x16.width; col++) {
+                framebuffer_set_pixel(cursor_x + col, cursor_y + row, 0x000000);
+            }
+        }
+
+        if (*str == '\b') {
+            handle_backspace();
+        } else if (*str == '\n') {
+            for (uint16_t row = 0; row < font_vga_8x16.height; row++) {
+                for (uint16_t col = 0; col < font_vga_8x16.width; col++) {
+                    framebuffer_set_pixel(cursor_x + col, cursor_y + row, 0x000000);
+                }
+            }
+            cursor_x = 0;
+            cursor_y += font_vga_8x16.height;
+        } else {
+            draw_char(cursor_x, cursor_y, *str, color);
+            cursor_x += font_vga_8x16.width;
+        }
+
+        update_cursor(); 
+
+        if (cursor_x + font_vga_8x16.width >= fb->width) {
+            cursor_x = 0;
+            cursor_y += font_vga_8x16.height;
+        }
+
+        if (cursor_y + font_vga_8x16.height >= fb->height) {
+            scroll_framebuffer();
+            cursor_y -= font_vga_8x16.height;
+        }
+
+        str++;
+    }
+
 }
 
 // framebuffer utils

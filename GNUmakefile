@@ -53,7 +53,9 @@ override CFLAGS += \
     -mno-sse2 \
     -mno-red-zone \
     -mcmodel=kernel \
-    -Werror # this is goated if you are osdev
+    -Wno-error=unused-parameter \
+    -Wno-error=unused-variable \
+    -Werror \
     # ignore -Werror=unused-parameter
 
 # Internal C preprocessor flags that should not be changed by the user.

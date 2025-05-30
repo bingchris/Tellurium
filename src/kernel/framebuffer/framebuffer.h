@@ -15,4 +15,8 @@ void framebuffer_move_cursor_back();
 void draw_cursor(uint32_t color);
 void handle_backspace();
 void update_cursor();
+void set_min_cursor();
+static uint16_t min_cursor_x;
+static uint16_t min_cursor_y;
+void kprint_user(const char *str, uint32_t color);
 #endif

@@ -98,15 +98,15 @@ void kernel_main(void) {
     //shit (shell is this (shit))
     //using keybord.c
     keyboard_init();
-    kprint("test> ", 0xffffff); //TODO: fix keyboard.c or something to make the user not be able to eat the fucking prompt
+    kprint("test> ", 0xffffff); //ok done TODO: fix keyboard.c or something to make the user not be able to eat the fucking prompt
     while (true) { //remind me tomorrow to implement this somehwere else
         keyboard_read();
         uint8_t key = keyboard_get_ascii();
         if (key) {
             if (key == '\b') {
-                kprint("\b \b", 0xffffff);
+                kprint_user("\b \b", 0xffffff);
             } else if (key) {
-                kprint((char[]){key, '\0'}, 0xffffff);
+                kprint_user((char[]){key, '\0'}, 0xffffff);
             }
 
         }
