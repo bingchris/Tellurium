@@ -8,6 +8,11 @@ static uint16_t cursor_x = 0, cursor_y = 0;
 // this is where user input is allowed to backspace to
 static uint16_t min_cursor_x = 0, min_cursor_y = 0;
 
+// blink state and timing
+static int cursor_visible = 1;
+static uint64_t last_blink = 0;
+#define CURSOR_BLINK_INTERVAL 1000 // blink every 1000 ticks
+
 /*
     keystone kernel
     bingchris 2025
@@ -34,26 +39,37 @@ void set_min_cursor() {
     min_cursor_y = cursor_y;
 }
 
+// call this from anywhere, just pass in a monotonically increasing tick count
+void framebuffer_cursor_blink_tick(uint64_t ticks) {
+    if (ticks - last_blink >= CURSOR_BLINK_INTERVAL) {
+        cursor_visible = !cursor_visible;
+        last_blink = ticks;
+        update_cursor();
+    }
+}
+
 void update_cursor() {
     struct framebuffer *fb = get_framebuffer();
     if (!fb) return;
 
+    // erase old cursor area
     for (uint16_t row = 0; row < font_vga_8x16.height; row++) {
         for (uint16_t col = 0; col < font_vga_8x16.width; col++) {
             framebuffer_set_pixel(cursor_x + col, cursor_y + row, 0x000000); // just black bg
         }
     }
 
-    // draw new cursor (just an underscore lol)
-    //TODO: make this a blinking cursor
-    draw_char(cursor_x, cursor_y, '_', 0xFFFFFF);
+    // draw cursor if visible
+    if (cursor_visible) {
+        draw_char(cursor_x, cursor_y, '_', 0xFFFFFF);
+    }
 }
 
 void handle_backspace() {
     struct framebuffer *fb = get_framebuffer();
     if (!fb) return;
 
-    // << \||\ \..>. \..\.>| translation: don't let user backspace past min_cursor
+    // don't let user backspace past min_cursor
     if (cursor_y < min_cursor_y || (cursor_y == min_cursor_y && cursor_x <= min_cursor_x)) {
         update_cursor();
         return;
