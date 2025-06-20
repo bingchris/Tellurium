@@ -19,7 +19,7 @@ static uint64_t last_blink = 0;
 */
 
 // scrolls framebuffer up when hit bottom <-- slow on some systems and not on others, probably related to framebuffer size
-void scroll_framebuffer() {
+void scroll_framebuffer() { 
     struct framebuffer *fb = get_framebuffer();
     if (!fb) return;
 
